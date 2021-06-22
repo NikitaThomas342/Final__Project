@@ -1,208 +1,184 @@
+function addMovieToTable(movie){
+    const row = document.getElementById('searchTable')
 
-function addStudentToTable(index,student){
-    const tbody = document.getElementById('tbody')
-
-    let row = document.createElement('tr')
-    let cell = document.createElement('th')
-    cell.setAttribute('score','row')
-    cell.innerHTML = index
-    row.appendChild(cell)
-    cell = document.createElement('td')
-    let names = document.createElement('p')
-    names.innerHTML = `${student.name} ${student.surname}`
-    names.addEventListener('click',function(){
-        showsingleClick(student.id)
+    let cell = document.createElement('div')
+    cell.classList.add("col-sm-6","mx-auto")
+    cell.style.margin="12px"
+    cell.addEventListener('dblclick',function(){
+        let confirmAdd = confirm(`Do you want to add "${movie.title}" to your list?`)
+        if(confirmAdd){
+            addSearchToDB(movie)
+        }
     })
-    cell.appendChild(names)
-    row.appendChild(cell)
-    cell = document.createElement('td')
-    let image = document.createElement('img')
-    image.src = student.image
-    image.height = 200
 
-    cell.appendChild(image)
-    row.appendChild(cell)
-    cell = document.createElement('td')
-    cell.innerHTML = student.gpa
-    row.appendChild(cell)
+        let cardint = document.createElement('div')
+        cardint.classList.add("card","text-white","bg-dark")
 
-    cell = document.createElement('td')
-    let button = document.createElement('button')
-    button.classList.add('btn')
-    button.classList.add('btn-primary')
-    button.setAttribute('type','button')
-    button.innerText ='edit'
-    button.addEventListener('click', function (){
-        editStudent(student.id)
-    })
-    cell.appendChild(button)
-    row.appendChild(cell)
+            let cardbody = document.createElement('div')
+            cardbody.classList.add("card-body")
+                let image = document.createElement('img')
+                image.src = movie.image_url
+                image.classList.add("rounded","mx-auto","d-block")
 
+                let brea = document.createElement('br')
 
-    cell = document.createElement('td')
-    button = document.createElement('button')
-    button.classList.add('btn')
-    button.classList.add('btn-danger')
-    button.setAttribute('type','button')
-    button.innerText ='delete'
-    button.addEventListener('click', function () { 
-        let confirmDel = confirm(`Are you sure you want to delete ${student.name}?`)
-        if(confirmDel){
-            console.log(student.id)
-            deleteStudent(student.id)
-        } 
-    })
-    cell.appendChild(button)
-    row.appendChild(cell)
-    row.appendChild(cell)
-    tbody.appendChild(row)
+                let title = document.createElement('h5')
+                title.classList.add("card-title")
+                title.innerHTML = movie.title
 
+                let synopsis = document.createElement('p')
+                synopsis.classList.add("card-text")
+                synopsis.innerHTML = "Synopsis : " + movie.synopsis
+
+                let type = document.createElement('p')
+                type.classList.add("card-text")
+                type.innerHTML = "Type : " + movie.type
+
+                let episode = document.createElement('p')
+                episode.classList.add("card-text")
+                episode.innerHTML = "Episodes : " + movie.episodes
+
+                let rated = document.createElement('p')
+                rated.classList.add("card-text")
+                rated.innerHTML = "Rated : " + movie.rated
+            cardbody.appendChild(image)
+            cardbody.appendChild(brea)
+            cardbody.appendChild(title)
+            cardbody.appendChild(synopsis)
+            cardbody.appendChild(type)
+            cardbody.appendChild(episode)
+            cardbody.appendChild(rated)
+        cardint.appendChild(cardbody)
+    cell.appendChild(cardint)
+
+    row.appendChild(cell)
 }
-function addStudentList(StudentList){
-    let counter = 1;
-    const tbody = document.getElementById('tbody')
-    tbody.innerHTML = ''
-    for (student of StudentList){
-        addStudentToTable(counter++,student)
+
+document.getElementById('searchButton').addEventListener('click',function(){
+    let query = document.getElementById('searchValue').value
+    getSearchQuery(query)
+})
+
+function getSearchQuery(query){
+    fetch(`https://api.jikan.moe/v3/search/anime?q=${query}`).then((response) =>{
+        return response.json()
+    }).then( data => {
+        searchResultList(data.results)
+    })
+}
+
+function searchResultList(searchdatalist){
+    const searchTable = document.getElementById('searchTable')
+    searchTable.innerHTML = ''
+    for(searchdata of searchdatalist){
+        addMovieToTable(searchdata)
     }
 }
-function showAllStudents(){
-    fetch('https://dv-student-backend-2019.appspot.com/students')
-    .then((response) => {
+
+function getMyListQuery(){
+    fetch(`https://se104-project-backend.du.r.appspot.com/movies/632110342`).then((response)=>{
         return response.json()
-    }).then(data =>{
-        addStudentList(data)
-    })
-}
-function addStudentToDB(student){
-    fetch('https://dv-student-backend-2019.appspot.com/students',{
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(student)
-    }).then(response =>{
-        if(response.status === 200){
-            return response.json()
-        }else{
-            throw Error(response.statusText)
-        }
-    }).then(data =>{
-        alert('Success')
-        showAllStudents()
-    })
-}
-function onAddStudentClick(){
-    let student = {}
-    student.name = document.getElementById('nameInput').value
-    student.surname = document.getElementById('surnameInput').value
-    student.studentId = document.getElementById('studentIdInput').value
-    student.gpa = document.getElementById('gpaInput').value
-    student.image = document.getElementById('imageLinkInput').value
-    addStudentToDB(student)
-}
-
-function onSearchClick(){
-    id = document.getElementById('searchValue').value
-    fetch(`https://dv-student-backend-2019.appspot.com/student/${id}`)
-    .then((response) => {
-        return response.json()
-    }).then(data => {
-        searchResultList(data);
+    }).then( data=>{
+        myListList(data)
     })
 }
 
-function searchResultList(resultList){
-    let counter = 1;
-    const searchResultBody = document.getElementById('searchResultBody')
-    searchResultBody.innerHTML = ''
-    searchResultData(counter++,resultList)
+function myListList(mylistlist){
+    const myListTable = document.getElementById('myListTable')
+    myListTable.innerHTML = ''
+    for(mylist of mylistlist){
+        addMyListToTable(mylist)
+    }
 }
 
-function searchResultData(index,student){
-    const searchResultBody = document.getElementById('searchResultBody')
-
-    let row = document.createElement('tr')
-    let cell = document.createElement('th')
-    cell.setAttribute('score','row')
-    cell.innerHTML = index
-    row.appendChild(cell)
-    cell = document.createElement('td')
-    let names = document.createElement('p')
-    names.innerHTML = `${student.name} ${student.surname}`
-    names.addEventListener('click',function(){
-        showsingleClick(student.id)
-    })
-    cell.appendChild(names)
-    row.appendChild(cell)
-    cell = document.createElement('td')
-    let image = document.createElement('img')
-    image.src = student.image
-    image.height = 200
-
-    cell.appendChild(image)
-    row.appendChild(cell)
-    cell = document.createElement('td')
-    cell.innerHTML = student.gpa
-    row.appendChild(cell)
-
-    cell = document.createElement('td')
-    let button = document.createElement('button')
-    button.classList.add('btn')
-    button.classList.add('btn-primary')
-    button.setAttribute('type','button')
-    button.innerText ='edit'
-    button.addEventListener('click', function (){
-        editStudent(student.id)
-    })
-    cell.appendChild(button)
-    row.appendChild(cell)
-
-    cell = document.createElement('td')
-    button = document.createElement('button')
-    button.classList.add('btn')
-    button.classList.add('btn-danger')
-    button.setAttribute('type','button')
-    button.innerText ='delete'
-    button.addEventListener('click', function () { 
-        let confirmDel = confirm(`Are you sure you want to delete ${student.name}?`)
-        if(confirmDel){
-            console.log(student.id)
-            deleteStudent(student.id)
-        } 
-    })
-    cell.appendChild(button)
-    row.appendChild(cell)
-    row.appendChild(cell)
-    searchResultBody.appendChild(row)
-
-}
-function showsingleClick(id){
-    fetch(`https://dv-student-backend-2019.appspot.com/student/${id}`)
-    .then((response) => {
-        return response.json()
-    }).then(data => {
-        hideAll()
-        singleStudentResult.style.display="block"
-        addStudentData(data);
-    })
-}
-function addStudentData(student){
-    let idElem = document.getElementById('id')
-    idElem.innerHTML = student.id
-    let studentIdElem = document.getElementById('studentId')
-    studentIdElem.innerHTML = student.studentId
-    let nameElem = document.getElementById('name')
-    nameElem.innerHTML = `${student.name} ${student.surname}`
-    let gpaElem = document.getElementById('gpa')
-    gpaElem.innerHTML = student.gpa
-    let profileElem = document.getElementById('image')
-    profileElem.setAttribute('src',student.image)
-    profileElem.height=300
+function addSearchToDB(movie){
+    var id=1
+    let body=`{"url":"${movie.url}","image_url":"${movie.image_url}","title":"${movie.title}","synopsis":"${movie.synopsis}","type":"${movie.type}","episodes":"${movie.episodes}","score":"${movie.score}","rated":"${movie.rated}","id":"${id}"}`
+    fetch(`https://se104-project-backend.du.r.appspot.com/movies `,{
+            method:'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: `{"id":"632110342","movie":${body}}`
+        }).then(response=>{
+            if(response.status == 200){
+                return response.json()
+            }else{
+                throw Error(response.statusText)
+            }
+        }).then(data=>{
+            alert('Success')
+            id++
+        }).catch(error=>{
+            alert('Error')
+        })
 }
 
-function deleteStudent(id){
-    fetch(`https://dv-student-backend-2019.appspot.com/student/${id}`,{
+function addMyListToTable(movie){
+    const row2 = document.getElementById('myListTable')
+
+    let cell = document.createElement('div')
+    cell.classList.add("col-sm-6","mx-auto")
+    cell.style.margin="12px"
+
+        let cardint = document.createElement('div')
+        cardint.classList.add("card","text-white","bg-dark")
+
+            let cardbody = document.createElement('div')
+            cardbody.classList.add("card-body")
+                let image = document.createElement('img')
+                image.src = movie.image_url
+                image.classList.add("rounded","mx-auto","d-block")
+
+                let brea = document.createElement('br')
+
+                let title2 = document.createElement('div')
+                title2.classList.add("d-flex","justify-content-center","mx-auto")
+
+                let title = document.createElement('h5')
+                title.classList.add("card-title")
+                title.innerHTML = movie.title
+                title2.appendChild(title)
+
+                let buttons = document.createElement('div')
+                buttons.classList.add("d-flex","justify-content-center","mx-auto")
+
+                let detail = document.createElement('button')
+                detail.classList.add("btn","btn-primary")
+                detail.style.margin="10px";
+                detail.innerHTML = "Details"
+                detail.addEventListener('click',function(){
+                    getdetail(movie.id)
+                })
+                buttons.appendChild(detail)
+
+
+                let del = document.createElement('button')
+                del.classList.add("btn","btn-danger")
+                del.style.margin="10px";
+                del.innerHTML = "Delete"
+                del.addEventListener('click',function(){
+                    let confirmDel = confirm(`Are you sure you want to delete ${movie.title}?`)
+                    if(confirmDel){
+                        delmovie(movie.id)
+                    } 
+                    
+                })
+                buttons.appendChild(del)
+            cardbody.appendChild(image)
+            cardbody.appendChild(brea)
+            cardbody.appendChild(title2)
+            cardbody.appendChild(buttons)
+
+        cardint.appendChild(cardbody)
+
+    cell.appendChild(cardint)
+
+    row2.appendChild(cell)
+}
+
+function delmovie(id){
+    fetch(`https://se104-project-backend.du.r.appspot.com/movie?id=632110342&&movieId=${id}`,{
         method: 'DELETE'
     }).then(response =>{
         if(response.status == 200){
@@ -211,125 +187,126 @@ function deleteStudent(id){
             throw Error(response.statusText)
         }
     }).then(data =>{
-        alert(`Student name ${data.name} is now deleted`)
-        showAllStudents()
+        alert(`Movie ${data.title} is now deleted`)
+        getMyListQuery()
     }).catch(error =>{
-        alert('your input student id is not in the database')
+        alert('Error')
     })
 }
 
-function editStudent(id){
-    fetch(`https://dv-student-backend-2019.appspot.com/student/${id}`)
-    .then(response => {
-        if(response.status == 200){
-            return response.json()
-        }else{
-            throw Error(response.statusText)
-        }
-    }).then(data =>{
-        hideAll()
-        editForm(data)
-    })
-}
-
-function editForm(data){
-    editPage.style.display="block"
-    let idElem = document.getElementById('editid')
-    idElem.innerHTML = data.id
-    let studentIdElem = document.getElementById('editstudentId')
-    studentIdElem.innerHTML = data.studentId
-    let nameElem = document.getElementById('editname')
-    nameElem.innerHTML = `${data.name} ${data.surname}`
-    let gpaElem = document.getElementById('editgpa')
-    gpaElem.innerHTML = data.gpa
-    let profileElem = document.getElementById('editimage')
-    profileElem.setAttribute('src',data.image)
-    profileElem.width=200
-    profileElem.height=200
-    editid = data.id
-}
-var editid
-document.getElementById('editButton').addEventListener('click',(event)=>{
-        editonClick()
-})
-function editonClick(){
-    let edit = {}
-    edit.id = editid
-    edit.name = document.getElementById('editnameInput').value
-    edit.surname = document.getElementById('editsurnameInput').value
-    edit.studentId = document.getElementById('editstudentIdInput').value
-    edit.gpa = document.getElementById('editgpaInput').value
-    edit.image = document.getElementById('editimageLinkInput').value
-    console.log(JSON.stringify(edit))
-    edittoDB(edit)
-}
-function edittoDB(data){
-    
-    console.log(id)
-    fetch(`https://dv-student-backend-2019.appspot.com/students`,{
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(data)
-    }).then(response =>{
-        if(response.status === 200){
-            return response.json()
-        }else{
-            throw Error(response.statusText)
-        }
-    }).then(data =>{
-        alert('Success')
-        showAllStudents()
-    })
-}
+var mylist = document.getElementById('myListTable')
+var browse = document.getElementById('searchTable')
+var search = document.getElementById('searchBar')
+var detail = document.getElementById('Detail')
 
 function onLoad(){
-    
-    fetch('https://dv-student-backend-2019.appspot.com/students').then((response) => {
+    showBrowse()
+}
+
+function hideBrowse(){
+    document.getElementById('searchTable').style.display='none'
+    search.style.display='none'
+}
+
+function showBrowse(){
+    document.getElementById('searchTable').style.display='flex'
+    search.style.display='flex'
+}
+
+function hideList(){
+    document.getElementById('myListTable').style.display='none'
+    document.getElementById('Detail').style.display='none'
+}
+
+function showList(){
+    document.getElementById('myListTable').style.display='flex'
+    document.getElementById('Detail').style.display='none'
+}
+
+function showDet(){
+    document.getElementById('myListTable').style.display='none'
+    document.getElementById('Detail').style.display='flex'
+}
+
+document.getElementById('BrowseNav').addEventListener('click',function(){
+    hideList()
+    showBrowse()
+})
+
+document.getElementById('MyListNav').addEventListener('click',function(){
+    hideBrowse()
+    showList()
+    getMyListQuery()
+})
+
+function getdetail(id){
+    fetch(`https://se104-project-backend.du.r.appspot.com/movie/632110342/${id}`)
+    .then((response) => {
         return response.json()
     }).then(data => {
-        hideAll()
-        listStudentResult.style.display="block"
-        addStudentList(data);
+        const detail = document.getElementById('Detail')
+        detail.innerHTML = ''
+        showDet()
+        showDetail(data);
     })
 }
 
-document.getElementById('searchButton').addEventListener('click',(event)=>{
-    onSearchClick()
-})
+function showDetail(movie){
+    const row = document.getElementById('Detail')
 
-document.getElementById('addButton').addEventListener('click',(event)=>{
-    onAddStudentClick()
-})
+    let button = document.createElement('button')
+    button.classList.add("btn","btn-primary")
+    button.style.margin="10px"
+    button.innerHTML="Back"
+    button.addEventListener('click',function(){
+        showList()
+    })
 
-var singleStudentResult = document.getElementById('single_student_result')
-var listStudentResult = document.getElementById('output')
-var addUserDetail= document.getElementById('addUserDetail')
-var searchBar = document.getElementById('searchBar')
-var searchResult =document.getElementById('searchResult')
-var editPage = document.getElementById('edit_student_result')
+    let cell = document.createElement('div')
+    cell.classList.add("col-sm-6","mx-auto")
+    cell.style.margin="12px"
 
-function hideAll(){
-    singleStudentResult.style.display='none'
-    listStudentResult.style.display='none'
-    addUserDetail.style.display='none'
-    searchBar.style.display='none'
-    searchResult.style.display='none'
-    editPage.style.display='none'
+        let cardint = document.createElement('div')
+        cardint.classList.add("card","text-white","bg-dark")
+
+            let cardbody = document.createElement('div')
+            cardbody.classList.add("card-body")
+                let image = document.createElement('img')
+                image.src = movie.image_url
+                image.classList.add("rounded","mx-auto","d-block")
+
+                let brea = document.createElement('br')
+
+                let title = document.createElement('h5')
+                title.classList.add("card-title")
+                title.innerHTML = movie.title
+
+                let synopsis = document.createElement('p')
+                synopsis.classList.add("card-text")
+                synopsis.innerHTML = "Synopsis : " + movie.synopsis
+
+                let type = document.createElement('p')
+                type.classList.add("card-text")
+                type.innerHTML = "Type : " + movie.type
+
+                let episode = document.createElement('p')
+                episode.classList.add("card-text")
+                episode.innerHTML = "Episodes : " + movie.episodes
+
+                let rated = document.createElement('p')
+                rated.classList.add("card-text")
+                rated.innerHTML = "Rated : " + movie.rated
+            cardbody.appendChild(image)
+            cardbody.appendChild(brea)
+            cardbody.appendChild(title)
+            cardbody.appendChild(synopsis)
+            cardbody.appendChild(type)
+            cardbody.appendChild(episode)
+            cardbody.appendChild(rated)
+        cardint.appendChild(button)
+        cardint.appendChild(cardbody)
+    
+    cell.appendChild(cardint)
+    
+    row.appendChild(cell)
 }
-
-document.getElementById('allStudentMenu').addEventListener('click',(event)=>{
-    hideAll()
-    listStudentResult.style.display="block"
-    showAllStudents()
-})
-document.getElementById('addStudentMenu').addEventListener('click',(event)=>{
-    hideAll()
-    addUserDetail.style.display='block'
-})
-document.getElementById('searchMenu').addEventListener('click',(event)=>{
-    hideAll()
-    searchBar.style.display='inline'
-    searchResult.style.display='block'
-})
