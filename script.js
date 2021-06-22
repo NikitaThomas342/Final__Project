@@ -19,6 +19,7 @@ function addMovieToTable(movie){
                 let image = document.createElement('img')
                 image.src = movie.image_url
                 image.classList.add("rounded","mx-auto","d-block")
+                image.style.border="3px solid white"
 
                 let brea = document.createElement('br')
 
@@ -118,7 +119,7 @@ function addMyListToTable(movie){
     const row2 = document.getElementById('myListTable')
 
     let cell = document.createElement('div')
-    cell.classList.add("col-sm-6","mx-auto")
+    cell.classList.add("col-sm-3","mx-auto")
     cell.style.margin="12px"
 
         let cardint = document.createElement('div')
@@ -129,6 +130,7 @@ function addMyListToTable(movie){
                 let image = document.createElement('img')
                 image.src = movie.image_url
                 image.classList.add("rounded","mx-auto","d-block")
+                image.style.border="3px solid white"
 
                 let brea = document.createElement('br')
 
@@ -274,6 +276,7 @@ function showDetail(movie){
                 let image = document.createElement('img')
                 image.src = movie.image_url
                 image.classList.add("rounded","mx-auto","d-block")
+                image.style.border="3px solid white"
 
                 let brea = document.createElement('br')
 

@@ -21,27 +21,27 @@
   </style>
   <body onload="onLoad()">
 
-    <nav class="navbar navbar-expand-sm navbar-dark bg-dark">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark" style="border-bottom:5px solid black;">
         <a class="navbar-brand" style="margin-left:50px; margin-right:25px;font-size:30px; color:crimson;text-decoration:bold; border:1px solid black;border-radius:5px;background-color:black;padding-left:15px;padding-right:15px;padding-bottom:8px;" href="#">MOVIE</a>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="nav">
                 <li class="nav-item">
-                    <a class="nav-link active" href="#" id="BrowseNav"><button type="button" class="btn btn-light">Browse</button></a>
+                    <a class="nav-link active" href="#" id="BrowseNav"><button type="button" class="btn btn-dark">Browse</button></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" id="MyListNav"><button type="button" class="btn btn-light">My List</button></a>
+                    <a class="nav-link" href="#" id="MyListNav"><button type="button" class="btn btn-dark">My List</button></a>
                 </li>
             </ul>
         </div>
     </nav>  
 
     <div id="searchBar" style="background-color:#EFEBEB;">
-        <div class="mx-auto" style="margin-top:15px;margin-bottom:5px;width:800px;">
-        <nav class="navbar justify-content-center bg-dark" style="border:1px solid hidden;border-radius:7px;">
+        <div class="mx-auto" style="margin-bottom:5px;width:800px;">
+        <nav class="navbar justify-content-center bg-dark" style="border-bottom-left-radius:20px;border-bottom-right-radius:20px;border:1px solid hidden">
             <form class="form-inline">
                 <div class="form-group row">
-                    <input class="form-control" type="search" style="margin-top:5px;"placeholder="Movie name" aria-label="Search" id="searchValue">
-                    <button class="btn btn-light mb-2" type="submit" id="searchButton">Browse</button>
+                    <input class="form-control" style="margin-top:5px;margin-bottom:5px" type="search" placeholder="Movie name" aria-label="Search" id="searchValue">
+                    <button class="btn btn-dark mb-2" type="submit" id="searchButton">Browse</button>
                 </div>
             </form>
         </nav>
